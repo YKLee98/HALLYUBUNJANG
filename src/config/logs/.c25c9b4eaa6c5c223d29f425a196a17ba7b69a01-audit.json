@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 7
+    },
+    "auditLog": "C:\\Users\\yukyu\\OneDrive\\Desktop\\HALLYUBUNJANG\\src\\config\\logs\\.c25c9b4eaa6c5c223d29f425a196a17ba7b69a01-audit.json",
+    "files": [
+        {
+            "date": 1751128150168,
+            "name": "C:\\Users\\yukyu\\OneDrive\\Desktop\\HALLYUBUNJANG\\src\\config\\logs\\app-2025-06-29-error.log",
+            "hash": "979bbaccfadd1f6de5bb396822cc1b597c140026706358c636f9015ff25df20d"
+        }
+    ],
+    "hashType": "sha256"
+}

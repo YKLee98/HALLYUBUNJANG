@@ -97,6 +97,24 @@ const config = {
     syncConcurrency: parseInt(process.env.BUNJANG_SYNC_CONCURRENCY, 10) || 1,
   },
 
+  // 중복 방지 설정
+  sync: {
+    // 분산 락 설정
+    lockTTLMs: parseInt(process.env.SYNC_LOCK_TTL_MS, 10) || 60000, // 60초
+    processingTimeoutMinutes: parseInt(process.env.SYNC_PROCESSING_TIMEOUT_MINUTES, 10) || 30, // 30분
+    
+    // 중복 방지 활성화
+    enableDuplicatePrevention: process.env.ENABLE_DUPLICATE_PREVENTION !== 'false', // 기본값 true
+    
+    // 동시성 제어
+    maxConcurrentProductSync: parseInt(process.env.MAX_CONCURRENT_PRODUCT_SYNC, 10) || 1,
+    
+    // 정리 작업 설정
+    cleanupIntervalHours: parseInt(process.env.CLEANUP_INTERVAL_HOURS, 10) || 6, // 6시간마다
+    cleanupStuckTimeoutMinutes: parseInt(process.env.CLEANUP_STUCK_TIMEOUT_MINUTES, 10) || 30, // 30분
+    cleanupOldErrorsDays: parseInt(process.env.CLEANUP_OLD_ERRORS_DAYS, 10) || 7, // 7일
+  },
+
   openExchangeRates: {
     appId: process.env.OPENEXCHANGERATES_APP_ID,
     apiUrl: process.env.OPENEXCHANGERATES_API_URL ,

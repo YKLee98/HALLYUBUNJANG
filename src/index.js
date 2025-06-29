@@ -35,6 +35,12 @@ const {
   // closeAllWorkers 
 } = require('./jobs');
 
+// 정리 스케줄러 추가
+const { 
+  initializeCleanupScheduler, 
+  stopCleanupScheduler 
+} = require('./schedulers/cleanupScheduler');
+
 const PORT = config.port;
 const HOST = config.host;
 
@@ -60,7 +66,15 @@ async function startServer() {
       logger.warn('[Startup] Redis is disabled, BullMQ job systems will not be started.');
     }
     
-    // 4. HTTP 서버 시작
+    // 4. 정리 스케줄러 초기화
+    if (config.redis.enabled && config.sync.enableDuplicatePrevention) {
+      initializeCleanupScheduler();
+      logger.info('[Startup] Cleanup scheduler initialized.');
+    } else {
+      logger.info('[Startup] Cleanup scheduler not started (Redis disabled or duplicate prevention disabled).');
+    }
+    
+    // 5. HTTP 서버 시작
     server.listen(PORT, HOST, () => {
       logger.info(`[Startup] Server listening on http://${HOST}:${PORT}`);
       logger.info(`[Startup] Middleware base URL for webhooks/proxy: ${config.middlewareBaseUrl}`);
@@ -97,18 +111,24 @@ async function gracefulShutdown(signal, error) {
     if (closeErr) logger.error('[Shutdown] Error closing HTTP server:', closeErr);
     else logger.info('[Shutdown] HTTP server closed.');
 
-    // 2. BullMQ 관련 시스템 종료 (통합 함수 사용)
+    // 2. 정리 스케줄러 종료
+    if (config.redis.enabled && config.sync.enableDuplicatePrevention) {
+      logger.info('[Shutdown] Stopping cleanup scheduler...');
+      try { stopCleanupScheduler(); } catch (e) { logger.error('[Shutdown] Error stopping cleanup scheduler:', e); }
+    }
+
+    // 3. BullMQ 관련 시스템 종료 (통합 함수 사용)
     if (config.redis.enabled) {
       await shutdownAllJobSystems(); // src/jobs/index.js 에 정의된 통합 종료 함수 호출
     }
 
-    // 3. Redis 연결 종료 (공유 클라이언트)
+    // 4. Redis 연결 종료 (공유 클라이언트)
     if (config.redis.enabled) {
       logger.info('[Shutdown] Disconnecting shared Redis client...');
       try { await disconnectRedis(); } catch (e) { logger.error('[Shutdown] Error disconnecting Redis:', e); }
     }
 
-    // 4. MongoDB 연결 종료
+    // 5. MongoDB 연결 종료
     logger.info('[Shutdown] Disconnecting MongoDB...');
     try { await disconnectDB(); } catch (e) { logger.error('[Shutdown] Error disconnecting MongoDB:', e); }
     

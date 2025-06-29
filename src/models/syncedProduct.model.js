@@ -61,6 +61,17 @@ const syncedProductSchema = new mongoose.Schema({
   syncErrorStackSample: { type: String, maxlength: 2000 },
   syncRetryCount: { type: Number, default: 0, index: true },
   
+  // 중복 방지를 위한 처리 상태 필드 (신규 추가)
+  processingStatus: {
+    type: String,
+    enum: ['idle', 'processing', 'completed', 'failed'],
+    default: 'idle',
+    index: true
+  },
+  processingStartedAt: { type: Date, index: true },
+  processingJobId: { type: String, index: true },
+  processingTimeoutAt: { type: Date, index: true }, // 처리 타임아웃 시간
+  
   // 판매 상태 관리 필드 (신규 추가)
   soldFrom: {
     type: String,
@@ -92,6 +103,8 @@ syncedProductSchema.index({ syncStatus: 1, lastSyncAttemptAt: -1 }); // 특정 �
 syncedProductSchema.index({ shopifyProductType: 1, shopifyListedPriceUsd: 1 }); // App Proxy 검색용
 syncedProductSchema.index({ soldFrom: 1, soldAt: -1 }); // 판매 상태별 검색
 syncedProductSchema.index({ pendingBunjangOrder: 1, shopifySoldAt: -1 }); // 번개장터 주문 대기 중인 상품
+syncedProductSchema.index({ processingStatus: 1, processingStartedAt: -1 }); // 처리 중인 상품 찾기
+syncedProductSchema.index({ processingStatus: 1, processingTimeoutAt: 1 }); // 타임아웃된 처리 찾기
 
 // 텍스트 인덱스 (검색용)
 syncedProductSchema.index({ 
@@ -117,6 +130,80 @@ syncedProductSchema.virtual('displayStatus').get(function() {
   if (this.shopifyStatus === 'SOLD_OUT') return 'SOLD OUT';
   return this.shopifyStatus || 'UNKNOWN';
 });
+
+// 동시성 제어를 위한 스태틱 메서드 추가
+syncedProductSchema.statics.startProcessing = async function(bunjangPid, jobId, timeoutMinutes = 30) {
+  const timeoutAt = new Date(Date.now() + timeoutMinutes * 60 * 1000);
+  
+  const result = await this.findOneAndUpdate(
+    { 
+      bunjangPid,
+      $or: [
+        { processingStatus: { $ne: 'processing' } },
+        { processingTimeoutAt: { $lt: new Date() } } // 타임아웃된 처리도 재시도 가능
+      ]
+    },
+    {
+      $set: {
+        processingStatus: 'processing',
+        processingStartedAt: new Date(),
+        processingJobId: jobId,
+        processingTimeoutAt: timeoutAt
+      }
+    },
+    { new: true }
+  );
+  
+  return result; // null이면 이미 처리 중이거나 존재하지 않음
+};
+
+syncedProductSchema.statics.completeProcessing = async function(bunjangPid, jobId, success = true) {
+  const updateData = {
+    processingStatus: success ? 'completed' : 'failed',
+    processingStartedAt: null,
+    processingJobId: null,
+    processingTimeoutAt: null
+  };
+  
+  if (!success) {
+    updateData.syncStatus = 'ERROR';
+    updateData.syncErrorMessage = 'Processing failed or timeout';
+  }
+  
+  const result = await this.findOneAndUpdate(
+    { 
+      bunjangPid,
+      processingJobId: jobId // 같은 jobId로 시작된 처리만 완료
+    },
+    { $set: updateData },
+    { new: true }
+  );
+  
+  return result;
+};
+
+syncedProductSchema.statics.cleanupStuckProcessing = async function(timeoutMinutes = 30) {
+  const timeoutAt = new Date(Date.now() - timeoutMinutes * 60 * 1000);
+  
+  const result = await this.updateMany(
+    {
+      processingStatus: 'processing',
+      processingStartedAt: { $lt: timeoutAt }
+    },
+    {
+      $set: {
+        processingStatus: 'failed',
+        processingStartedAt: null,
+        processingJobId: null,
+        processingTimeoutAt: null,
+        syncStatus: 'ERROR',
+        syncErrorMessage: 'Processing timeout - stuck in processing state'
+      }
+    }
+  );
+  
+  return result.modifiedCount;
+};
 
 const SyncedProduct = mongoose.model('SyncedProduct', syncedProductSchema);
 

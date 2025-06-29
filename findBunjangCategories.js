@@ -104,11 +104,7 @@ async function main() {
 
   if (allCategories.length > 0) {
     const targetKeywords = [
-      // K-Pop 관련 키워드
-      "k-pop", "케이팝", "아이돌", "idol", "앨범", "album", "포토카드", "photocard", "굿즈", "goods", "음반",
-      // 키덜트 관련 키워드
-      "키덜트", "kidult", "피규어", "figure", "프라모델", "plamodel", "건담", "gundam", "레고", "lego", "장난감", "toy", "인형", "doll"
-      // 필요에 따라 더 많은 키워드 추가
+      '의류','장신구'
     ];
 
     const relevantCategories = findMatchingCategories(allCategories, targetKeywords);

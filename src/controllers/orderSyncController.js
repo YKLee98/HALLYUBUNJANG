@@ -55,13 +55,27 @@ async function handleShopifyOrderCreateWebhook(req, res, next) {
     try {
       // 작업 데이터에는 전체 Shopify 주문 객체 또는 필요한 부분만 포함
       const jobData = { shopifyOrder, receivedAt: new Date().toISOString(), sourceShop: shopDomain };
-      // 작업 ID는 Shopify 주문 ID를 사용하여 중복 추가 방지 (BullMQ는 동일 ID 작업 추가 시 무시 또는 업데이트 가능)
-      const jobId = `shopify-order-${shopifyOrderId}`; 
+      const jobId = `shopify-order-${shopifyOrderId}`;
+      
+      // 중복 확인 개선
+      const existingJob = await orderQueue.getJob(jobId);
+      if (existingJob) {
+        const jobState = await existingJob.getState();
+        if (['completed', 'failed'].includes(jobState)) {
+          // 완료되거나 실패한 작업은 재시도 가능
+          logger.info(`[OrderSyncCtrlr] Removing completed/failed job for order ${shopifyOrderId} (state: ${jobState}) and creating new one`);
+          await existingJob.remove();
+        } else {
+          // 진행 중인 작업은 스킵
+          logger.info(`[OrderSyncCtrlr] Order ${shopifyOrderId} already in queue with state: ${jobState}`);
+          return res.status(200).send('Order already being processed');
+        }
+      }
       
       await orderQueue.add('ProcessShopifyOrder', jobData, { 
-        jobId, // 중복 방지용 작업 ID
-        // removeOnComplete: true, // 바로 삭제 (기본 옵션 따름)
-        // attempts: 5, // 이 작업에 대한 특정 재시도 횟수
+        jobId,
+        removeOnComplete: { age: 3600 }, // 1시간 후 삭제
+        removeOnFail: false // 실패 시 보관
       });
 
       logger.info(`[OrderSyncCtrlr] Shopify Order ID: ${shopifyOrderId} successfully added to queue "${orderQueueName}" with Job ID: ${jobId}.`);

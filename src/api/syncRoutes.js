@@ -8,6 +8,7 @@ const logger = require('../config/logger');
 const config = require('../config');
 const { getQueue } = require('../jobs/queues');
 const { AppError } = require('../utils/customErrors');
+const { runManualCleanup, getCleanupSchedulerStatus } = require('../schedulers/cleanupScheduler');
 // const productSyncController = require('../controllers/productSyncController'); // 컨트롤러 사용 시
 
 // 이 라우트들은 authMiddleware.verifyInternalApiKey 를 통해 보호되어야 함 (api/index.js에서 적용)
@@ -74,6 +75,49 @@ router.post('/catalog/segment', async (req, res, next) => {
   }
 });
 
+/**
+ * POST /api/sync/cleanup
+ * 수동으로 정리 작업을 실행합니다.
+ */
+async function triggerManualCleanup(req, res, next) {
+  try {
+    logger.info('[SyncRoutes] Manual cleanup triggered via API');
+    
+    const result = await runManualCleanup();
+    
+    res.status(200).json({
+      message: '정리 작업이 성공적으로 완료되었습니다.',
+      result,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    logger.error('[SyncRoutes] Error during manual cleanup:', error);
+    next(new AppError('정리 작업 실행 중 오류가 발생했습니다.', 500, 'CLEANUP_EXECUTION_FAILED', true, error));
+  }
+}
+
+/**
+ * GET /api/sync/cleanup/status
+ * 정리 스케줄러 상태를 확인합니다.
+ */
+async function getCleanupStatus(req, res, next) {
+  try {
+    const status = getCleanupSchedulerStatus();
+    
+    res.status(200).json({
+      message: '정리 스케줄러 상태 조회 완료',
+      status,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    logger.error('[SyncRoutes] Error getting cleanup status:', error);
+    next(new AppError('정리 스케줄러 상태 조회 중 오류가 발생했습니다.', 500, 'CLEANUP_STATUS_FAILED', true, error));
+  }
+}
+
+// 정리 작업 라우트 추가
+router.post('/cleanup', triggerManualCleanup);
+router.get('/cleanup/status', getCleanupStatus);
 
 // TODO: 특정 Shopify 주문 재처리 엔드포인트 (Shopify Order ID를 받아 주문 처리 큐에 작업 추가)
 // router.post('/order/:shopifyOrderId/reprocess', async (req, res, next) => { ... });
@@ -82,4 +126,8 @@ router.post('/catalog/segment', async (req, res, next) => {
 // router.post('/product/:bunjangPid/resync', async (req, res, next) => { ... });
 
 
-module.exports = router;
+module.exports = {
+  router,
+  triggerManualCleanup,
+  getCleanupStatus
+};

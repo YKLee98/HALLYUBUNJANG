@@ -97,9 +97,34 @@ async function triggerSingleProductSync(req, res, next) {
   
   try {
     const jobData = { bunjangPid, triggeredBy: 'api_manual_single_product_sync', requestedBy: req.ip };
-    // 동일 PID에 대한 중복 작업 방지 또는 고유 ID 생성
-    const jobId = `manual-single-product-${bunjangPid}-${Date.now()}`; 
-    const job = await productSyncQueue.add(jobName, jobData, { jobId });
+    
+    // 타임스탬프 대신 PID만 사용하여 중복 방지
+    const jobId = `manual-single-product-${bunjangPid}`;
+    
+    // 기존 작업이 있는지 확인
+    const existingJob = await productSyncQueue.getJob(jobId);
+    if (existingJob) {
+      const jobState = await existingJob.getState();
+      if (['waiting', 'active', 'delayed'].includes(jobState)) {
+        logger.info(`[ProductSyncCtrlr] Job already exists for PID ${bunjangPid} with state: ${jobState}`);
+        return res.status(409).json({
+          message: `이미 처리 중인 작업이 있습니다 (PID: ${bunjangPid})`,
+          existingJobId: existingJob.id,
+          state: jobState,
+          timestamp: new Date().toISOString()
+        });
+      } else if (['completed', 'failed'].includes(jobState)) {
+        // 완료되거나 실패한 작업은 제거하고 새로 생성
+        logger.info(`[ProductSyncCtrlr] Removing completed/failed job for PID ${bunjangPid} and creating new one`);
+        await existingJob.remove();
+      }
+    }
+    
+    const job = await productSyncQueue.add(jobName, jobData, { 
+      jobId,
+      removeOnComplete: true,
+      removeOnFail: false
+    });
 
     logger.info(`[ProductSyncCtrlr] Job "${jobName}" (ID: ${job.id}) for Bunjang PID ${bunjangPid} added to queue "${queueName}".`);
     res.status(202).json({
