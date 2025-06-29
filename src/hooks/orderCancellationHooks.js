@@ -36,7 +36,7 @@ async function handleOrderCreationResult(order, bunjangResult) {
   }
   
   // 부분 실패 확인
-  const hasErrors = order.tags?.some(tag => 
+  const hasErrors = Array.isArray(order.tags) && order.tags.some(tag => 
     orderCancellationService.CANCELLATION_CONFIG.errorTagPatterns.some(pattern => {
       const regex = new RegExp(pattern.replace(/\*/g, '.*'));
       return regex.test(tag);
@@ -77,8 +77,12 @@ async function handleOrderCreationResult(order, bunjangResult) {
 async function handleOrderUpdate(updatedOrder, previousTags = []) {
   const orderId = updatedOrder.admin_graphql_api_id || `gid://shopify/Order/${updatedOrder.id}`;
   
+  // 태그가 배열인지 확인하고 안전하게 처리
+  const currentTags = Array.isArray(updatedOrder.tags) ? updatedOrder.tags : [];
+  const previousTagsArray = Array.isArray(previousTags) ? previousTags : [];
+  
   // 새로 추가된 에러 태그 확인
-  const newTags = updatedOrder.tags.filter(tag => !previousTags.includes(tag));
+  const newTags = currentTags.filter(tag => !previousTagsArray.includes(tag));
   const errorCheck = orderCancellationService.checkBunjangOrderErrors(newTags);
   
   if (errorCheck.hasError) {

@@ -53,7 +53,12 @@ function createOrderWorker(queueName, connection) {
   });
   
   worker.on('error', err => {
-    logger.error(`[Worker: ${worker.name}] General error in order worker:`, err);
+    logger.error(`[Worker: ${worker.name}] General error in order worker: ${err.message}`, {
+      stack: err.stack,
+      code: err.code,
+      address: err.address,
+      port: err.port
+    });
   });
 
   logger.info(`[Worker] Order Processing Worker listening on queue "${queueName}" with concurrency ${CONCURRENCY}.`);

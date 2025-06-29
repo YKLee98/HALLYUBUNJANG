@@ -44,7 +44,9 @@ const baseRedisConnectionOptions = {
 const bullmqDedicatedRedisConnectionOptions = {
   ...baseRedisConnectionOptions, // 기본 옵션 상속
   maxRetriesPerRequest: null,    // BullMQ는 이것이 반드시 null이어야 함!
-  enableOfflineQueue: false,     // BullMQ는 일반적으로 false를 권장
+  enableOfflineQueue: true,      // BullMQ 연결 안정성을 위해 true로 변경
+  lazyConnect: true,             // 연결을 지연시켜 초기화 문제 방지
+  keepAlive: 30000,             // 30초마다 keep-alive 패킷 전송
   // BullMQ를 위한 retryStrategy는 ioredis의 기본값을 사용하거나, 여기서 다르게 설정 가능.
   // 다만, maxRetriesPerRequest: null 설정이 이 오류의 핵심 수정 사항임.
   // 만약 BullMQ 전용으로 다른 retryStrategy를 원한다면 여기서 오버라이드:

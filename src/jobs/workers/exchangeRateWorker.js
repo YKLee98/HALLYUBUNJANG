@@ -67,7 +67,12 @@ function createExchangeRateWorker(queueName, connection) {
   });
 
   worker.on('error', err => {
-    logger.error(`[Worker: ${worker.name}] General error in worker:`, err);
+    logger.error(`[Worker: ${worker.name}] General error in worker: ${err.message}`, {
+      stack: err.stack,
+      code: err.code,
+      address: err.address,
+      port: err.port
+    });
   });
   
   logger.info(`[Worker] Exchange Rate Worker listening on queue "${queueName}" with concurrency ${CONCURRENCY}.`);

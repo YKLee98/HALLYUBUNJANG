@@ -123,7 +123,7 @@ router.post('/orders/fulfilled', verifyWebhook, async (req, res) => {
     logger.info(`[Webhook] Order fulfilled: #${order.order_number || order.name} (${order.id})`);
     
     // 주문에 번개장터 주문 태그가 있는지 확인
-    const hasBunjangOrder = order.tags?.some(tag => tag.startsWith('BunjangOrder-'));
+    const hasBunjangOrder = Array.isArray(order.tags) && order.tags.some(tag => tag.startsWith('BunjangOrder-'));
     
     // 주문 상품별 최종 처리
     for (const lineItem of order.line_items || []) {

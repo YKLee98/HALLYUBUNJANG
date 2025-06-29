@@ -1,0 +1,54 @@
+{"timestamp":"2025-06-30 07:50:45.991 +0900","level":"info","message":"[Startup] Configuration validation successful.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:47.924 +0900","level":"info","message":"[ShopifySvc] Environment variables check at startup:","service":"bunjang-shopify-sync","metadata":{"SHOPIFY_DEFAULT_LOCATION_ID_ENV":"gid://shopify/Location/82976702713","configDefaultLocationId":"gid://shopify/Location/82976702713","nodeEnv":"development"}}
+{"timestamp":"2025-06-30 07:50:47.930 +0900","level":"info","message":"[ShopifySvc] Shopify API client initialized successfully. Host: hallyusuperstore19.myshopify.com, API Version: April25. (Configured: 2025-04)","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.097 +0900","level":"info","message":"[InventorySvc] Using location from environment: gid://shopify/Location/82976702713","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.098 +0900","level":"info","message":"[InventorySvc] Location ID (numeric): 82976702713","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.117 +0900","level":"info","message":"[AuthMiddleware] Internal API Key authentication middleware is configured and active.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.491 +0900","level":"info","message":"[App] Order cancellation job queue initialized","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.496 +0900","level":"info","message":"Initializing BullMQ queue: catalog-processing-queue","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.498 +0900","level":"info","message":"[RedisClient-BullMQ] Providing new Redis connection instance for BullMQ to 127.0.0.1:6379 with BullMQ specific options (maxRetriesPerRequest: null).","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.500 +0900","level":"info","message":"Initializing BullMQ queue: product-sync-queue","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.501 +0900","level":"info","message":"[RedisClient-BullMQ] Providing new Redis connection instance for BullMQ to 127.0.0.1:6379 with BullMQ specific options (maxRetriesPerRequest: null).","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.502 +0900","level":"info","message":"Initializing BullMQ queue: order-processing-queue","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.503 +0900","level":"info","message":"[RedisClient-BullMQ] Providing new Redis connection instance for BullMQ to 127.0.0.1:6379 with BullMQ specific options (maxRetriesPerRequest: null).","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.504 +0900","level":"info","message":"Initializing BullMQ queue: order-status-sync-queue","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.505 +0900","level":"info","message":"[RedisClient-BullMQ] Providing new Redis connection instance for BullMQ to 127.0.0.1:6379 with BullMQ specific options (maxRetriesPerRequest: null).","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.506 +0900","level":"info","message":"Initializing BullMQ queue: exchange-rate-update-queue","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.507 +0900","level":"info","message":"[RedisClient-BullMQ] Providing new Redis connection instance for BullMQ to 127.0.0.1:6379 with BullMQ specific options (maxRetriesPerRequest: null).","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.513 +0900","level":"info","message":"Bull Board UI available at /admin/jobs. User: YKLEE","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.636 +0900","level":"info","message":"[Startup] Starting bunjang-shopify-middleware-pro v1.2.0 in development mode...","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.637 +0900","level":"info","message":"Attempting MongoDB connection (Attempt 1/5)... URI: mongodb://localhost:27017/bunjangShopifyIntegrationDB_Test","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.740 +0900","level":"info","message":"MongoDB connected successfully.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.741 +0900","level":"info","message":"[RedisClient-Shared] Creating new shared Redis connection to 127.0.0.1:6379","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.743 +0900","level":"info","message":"[Startup] Shared Redis client initialization requested (if enabled).","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.744 +0900","level":"info","message":"[JobSystems] Initializing all BullMQ job systems...","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.744 +0900","level":"info","message":"Pre-initializing BullMQ queues defined in config...","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.746 +0900","level":"info","message":"[JobSystems] BullMQ queues pre-initialized.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.746 +0900","level":"info","message":"[Workers] Initializing all BullMQ workers...","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.747 +0900","level":"info","message":"[RedisClient-BullMQ] Providing new Redis connection instance for BullMQ to 127.0.0.1:6379 with BullMQ specific options (maxRetriesPerRequest: null).","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.749 +0900","level":"info","message":"[Worker] Exchange Rate Worker listening on queue \"exchange-rate-update-queue\" with concurrency 1.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.749 +0900","level":"info","message":"[Workers] Exchange Rate Worker for queue \"exchange-rate-update-queue\" initialized.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.750 +0900","level":"info","message":"[RedisClient-BullMQ] Providing new Redis connection instance for BullMQ to 127.0.0.1:6379 with BullMQ specific options (maxRetriesPerRequest: null).","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.751 +0900","level":"info","message":"[Worker] Catalog Processing Worker listening on queue \"catalog-processing-queue\" with concurrency 1. Lock duration: 1800s.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.752 +0900","level":"info","message":"[Workers] Catalog Processing Worker for queue \"catalog-processing-queue\" initialized.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.752 +0900","level":"info","message":"[RedisClient-BullMQ] Providing new Redis connection instance for BullMQ to 127.0.0.1:6379 with BullMQ specific options (maxRetriesPerRequest: null).","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.753 +0900","level":"info","message":"[Worker] Order Processing Worker listening on queue \"order-processing-queue\" with concurrency 5.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.754 +0900","level":"info","message":"[Workers] Order Processing Worker for queue \"order-processing-queue\" initialized.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.754 +0900","level":"info","message":"[Workers] All 3 BullMQ workers have been initialized.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.755 +0900","level":"info","message":"[JobSystems] BullMQ workers initialized and started.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.756 +0900","level":"info","message":"[Scheduler] Initializing cron jobs for BullMQ producers...","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.783 +0900","level":"info","message":"[Cron] Scheduled job: \"UpdateExchangeRates\" with cron: 0 */3 * * * on queue: exchange-rate-update-queue","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.784 +0900","level":"info","message":"[Cron] Scheduled job: \"FetchBunjangCatalog-Full\" with cron: 30 3 * * * on queue: catalog-processing-queue","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.786 +0900","level":"info","message":"[Cron] Scheduled job: \"FetchBunjangCatalog-Segment\" with cron: 30 * * * * on queue: catalog-processing-queue","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.786 +0900","level":"info","message":"[Scheduler] All cron jobs for BullMQ producers have been scheduled.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.787 +0900","level":"info","message":"[JobSystems] Scheduled job producers (cron jobs for BullMQ) initialized.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.788 +0900","level":"info","message":"[JobSystems] All BullMQ job systems have been initialized.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.789 +0900","level":"info","message":"[CleanupScheduler] Initializing cleanup scheduler with cron: 0 */6 * * *","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.790 +0900","level":"info","message":"[CleanupScheduler] Cleanup scheduler started successfully","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.791 +0900","level":"info","message":"[Startup] Cleanup scheduler initialized.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.796 +0900","level":"info","message":"[Startup] Server listening on http://0.0.0.0:3000","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.796 +0900","level":"info","message":"[Startup] Middleware base URL for webhooks/proxy: https://a73a-43-203-139-58.ngrok-free.app","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.797 +0900","level":"info","message":"[Startup] BullMQ Arena UI available at /admin/jobs (if enabled and not in production without auth).","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.797 +0900","level":"info","message":"[Startup] Application started successfully!","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.803 +0900","level":"info","message":"[RedisClient-Shared] Shared Redis client: connection established.","service":"bunjang-shopify-sync"}
+{"timestamp":"2025-06-30 07:50:49.816 +0900","level":"info","message":"[RedisClient-Shared] Shared Redis client: ready to use.","service":"bunjang-shopify-sync"}
