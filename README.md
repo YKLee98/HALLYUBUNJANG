@@ -328,7 +328,7 @@ ISC License
 
 ## 👥 팀
 
-**CS Trading (AI Enhanced Pro Version)**
+**CS Trading 이유경 **
 
 ---
 
@@ -336,9 +336,8 @@ ISC License
 
 문제가 발생하거나 질문이 있으시면 다음 방법으로 문의해주세요:
 
-- **이슈 등록**: GitHub Issues
-- **문서 확인**: 프로젝트 Wiki
-- **로그 확인**: `logs/` 디렉토리
+math.makes.you.free@gmail.com
+yukyung121@hotmail.com
 
 ---
 
